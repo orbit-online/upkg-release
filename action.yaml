@@ -39,22 +39,18 @@ runs:
     id: release
     with:
       working-directory: ${{ inputs.working-directory || '.' }}
-  - name: Get the basename of the bundled package
-    id: basename
-    shell: bash
-    run: printf "basename=%s\n" "$(basename "${{ steps.bundle.outputs.bundle-path }}")" >> $GITHUB_OUTPUT
   - uses: ncipollo/release-action@v1
     with:
       name: ${{ steps.release.outputs.tag }}
       body: |
         Install/depend on this package using [μpkg](https://github.com/orbit-online/upkg):
         ```
-        upkg add https://github.com/${{ github.repository }}/releases/download/${{ steps.release.outputs.tag }}/${{ steps.basename.outputs.basename }}
+        upkg add https://github.com/${{ github.repository }}/releases/download/${{ steps.release.outputs.tag }}/${{ steps.bundle.outputs.basename }} ${{ steps.bundle.outputs.sha256 }}
         ```
 
         ${{ steps.release.outputs.message }}
       draft: false
       prerelease: false
-      artifacts: ${{ steps.bundle.outputs.bundle-path }}
+      artifacts: ${{ steps.bundle.outputs.dest }}
       artifactErrorsFailBuild: true
       artifactContentType: application/gzip

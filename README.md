@@ -25,7 +25,7 @@ jobs:
 
 | Name                | Description                                                                                                       | Default                                                                                     |
 | ------------------- | ----------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| `upkg-version`      | The version of μpkg to use for bundling                                                                           | `latest`                                                                                    |
+| `upkg-version`      | The version of μpkg to use for bundling                                                                           | The one already installed or `latest` (to always get `latest`, set this input explicitly)   |
 | `version`           | The version to write to upkg.json, corresponds to `-V` in `upkg bundle`                                           | [`program-version.sh "${{ github.ref }}"`](https://github.com/orbit-online/program-version) |
 | `paths`             | Argument (space separated) list of relative paths to files and directories to include in the package.             | None, the μpkg default                                                                      |
 | `working-directory` | The working directory to change to before determining the version and bundling. This disables automatic checkout. | `.`                                                                                         |
