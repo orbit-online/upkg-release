@@ -5,9 +5,13 @@ inputs:
     description: The version of μpkg to use for bundling
     default: latest
     required: false
+  name:
+    description: The name of the package, will override the name already set in `upkg.json`
+    default: ""
+    required: false
   version:
     description: The version to write to upkg.json, corresponds to `-V` in `upkg bundle`
-    default: ""
+    default: "---auto---"
     required: false
   paths:
     description: Argument (space separated) list of relative paths to files and directories to include in the package.
@@ -18,9 +22,18 @@ inputs:
     default: ""
     required: false
 outputs:
+  name:
+    description: The name of the released package
+    value: ${{ steps.bundle.outputs.name }}
+  version:
+    description: The version of the released package
+    value: ${{ steps.bundle.outputs.version }}
   download-url:
-    description: The download URL of the bundled package
+    description: The download URL of the released package
     value: https://github.com/${{ github.repository }}/releases/download/${{ steps.release.outputs.tag }}/${{ steps.basename.outputs.basename }}
+  sha256:
+    description: The SHA-256 checksum of the released package
+    value: ${{ steps.bundle.outputs.sha256 }}
 runs:
   using: composite
   steps:
@@ -32,6 +45,7 @@ runs:
     id: bundle
     with:
       upkg-version: ${{ inputs.upkg-version }}
+      name: ${{ inputs.name }}
       version: ${{ inputs.version }}
       paths: ${{ inputs.paths }}
       working-directory: ${{ inputs.working-directory || '.' }}
