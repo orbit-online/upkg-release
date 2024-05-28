@@ -49,6 +49,11 @@ runs:
       version: ${{ inputs.version }}
       paths: ${{ inputs.paths }}
       working-directory: ${{ inputs.working-directory || '.' }}
+  - name: Determine bundle location
+    id: bundle_dest
+    shell: bash
+    run: printf "dest=%s\n" "$(realpath "${{ steps.bundle.outputs.dest }}")" >> $GITHUB_OUTPUT
+    working-directory: ${{ inputs.working-directory || '.' }}
   - uses: orbit-online/git-release@v1
     id: release
     with:
@@ -65,6 +70,6 @@ runs:
         ${{ steps.release.outputs.message }}
       draft: false
       prerelease: false
-      artifacts: ${{ steps.bundle.outputs.dest }}
+      artifacts: ${{ steps.bundle_dest.outputs.dest }}
       artifactErrorsFailBuild: true
       artifactContentType: application/gzip
