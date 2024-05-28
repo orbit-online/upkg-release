@@ -1,4 +1,4 @@
-# upkg-install
+# upkg-release
 
 A GitHub action to bundle a μpkg package and create a GitHub release with it
 
