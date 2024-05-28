@@ -59,7 +59,7 @@ runs:
       body: |
         Install/depend on this package using [μpkg](https://github.com/orbit-online/upkg):
         ```
-        upkg add https://github.com/${{ github.repository }}/releases/download/${{ steps.release.outputs.tag }}/${{ steps.bundle.outputs.basename }} ${{ steps.bundle.outputs.sha256 }}
+        upkg add 'https://github.com/${{ github.repository }}/releases/download/${{ steps.release.outputs.tag }}/${{ steps.bundle.outputs.basename }}' ${{ steps.bundle.outputs.sha256 }}
         ```
 
         ${{ steps.release.outputs.message }}
