@@ -30,6 +30,7 @@ jobs:
 | `version`           | The version to write to `upkg.json`, corresponds to `-V` in `upkg bundle`                                         | [`program-version.sh "${{ github.ref }}"`](https://github.com/orbit-online/program-version), set to `""` to disable |
 | `paths`             | Argument (space separated) list of relative paths to files and directories to include in the package.             | None, the μpkg default                                                                                              |
 | `working-directory` | The working directory to change to before determining the version and bundling. This disables automatic checkout. | `.`                                                                                                                 |
+| `release-name`      | Name of the github release.                                                                                       | `version` input                                                                                                     |
 
 ### Outputs
 
@@ -39,3 +40,4 @@ jobs:
 | `version`      | The version of the released package          |
 | `download-url` | The download URL of the released package     |
 | `sha256`       | The SHA-256 checksum of the released package |
+| `release-name` | Name of the github release                   |

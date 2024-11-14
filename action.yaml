@@ -21,6 +21,10 @@ inputs:
     description: The working directory to change to before determining the version and bundling. This disables automatic checkout.
     default: ""
     required: false
+  release-name:
+    description: Name of the github release.
+    default: "---auto---"
+    required: false
 outputs:
   name:
     description: The name of the released package
@@ -34,6 +38,9 @@ outputs:
   sha256:
     description: The SHA-256 checksum of the released package
     value: ${{ steps.bundle.outputs.sha256 }}
+  release-name:
+    description: Name of the github release.
+    value: ${{ inputs.release-name == '---auto---' && inputs.version || inputs.release-name }}
 runs:
   using: composite
   steps:
@@ -54,17 +61,14 @@ runs:
     shell: bash
     run: printf "dest=%s\n" "$(realpath "${{ steps.bundle.outputs.dest }}")" >> $GITHUB_OUTPUT
     working-directory: ${{ inputs.working-directory || '.' }}
-  - uses: orbit-online/git-release@v1
-    id: release
-    with:
-      working-directory: ${{ inputs.working-directory || '.' }}
+
   - uses: ncipollo/release-action@v1
     with:
-      name: ${{ steps.release.outputs.tag }}
+      name: ${{ inputs.release-name == '---auto---' && inputs.version || inputs.release-name }}
       body: |
         Install/depend on this package using [μpkg](https://github.com/orbit-online/upkg):
         ```
-        upkg add 'https://github.com/${{ github.repository }}/releases/download/${{ steps.release.outputs.tag }}/${{ steps.bundle.outputs.basename }}' ${{ steps.bundle.outputs.sha256 }}
+        upkg add 'https://github.com/${{ github.repository }}/releases/download/${{ inputs.release-name == '---auto---' && inputs.version || inputs.release-name }}/${{ steps.bundle.outputs.basename }}' ${{ steps.bundle.outputs.sha256 }}
         ```
 
         ${{ steps.release.outputs.message }}
