@@ -25,6 +25,10 @@ inputs:
     description: Name of the github release.
     default: "---auto---"
     required: false
+  release-message:
+    description: The github release message to add after the installation instructions.
+    default: "---auto---"
+    required: false
 outputs:
   name:
     description: The name of the released package
@@ -41,6 +45,9 @@ outputs:
   release-name:
     description: Name of the github release.
     value: ${{ inputs.release-name == '---auto---' && inputs.version || inputs.release-name }}
+  release-message:
+    description: The github release message that has been appended to the installation instructions.
+    value: ${{ inputs.release-message == '---auto---' && steps.release.outputs.message || inputs.release-message }}
 runs:
   using: composite
   steps:
@@ -61,7 +68,11 @@ runs:
     shell: bash
     run: printf "dest=%s\n" "$(realpath "${{ steps.bundle.outputs.dest }}")" >> $GITHUB_OUTPUT
     working-directory: ${{ inputs.working-directory || '.' }}
-
+  - uses: orbit-online/git-release@v1
+    if: "${{ inputs.release-message == '---auto---' }}"
+    id: release
+    with:
+      working-directory: ${{ inputs.working-directory || '.' }}
   - uses: ncipollo/release-action@v1
     with:
       name: ${{ inputs.release-name == '---auto---' && inputs.version || inputs.release-name }}
@@ -71,7 +82,7 @@ runs:
         upkg add 'https://github.com/${{ github.repository }}/releases/download/${{ inputs.release-name == '---auto---' && inputs.version || inputs.release-name }}/${{ steps.bundle.outputs.basename }}' ${{ steps.bundle.outputs.sha256 }}
         ```
 
-        ${{ steps.release.outputs.message }}
+        ${{ inputs.release-message == '---auto---' && inputs.release-message || steps.release.outputs.message }}
       draft: false
       prerelease: false
       artifacts: ${{ steps.bundle_dest.outputs.dest }}
