@@ -44,7 +44,7 @@ outputs:
     value: ${{ steps.bundle.outputs.sha256 }}
   release-name:
     description: Name of the github release.
-    value: ${{ inputs.release-name == '---auto---' && inputs.version || inputs.release-name }}
+    value: ${{ inputs.release-name == '---auto---' && (inputs.version == '---auto---' && steps.bundle.outputs.version || inputs.version) || inputs.release-name }}
   release-message:
     description: The github release message that has been appended to the installation instructions.
     value: ${{ inputs.release-message == '---auto---' && steps.release.outputs.message || inputs.release-message }}
@@ -75,11 +75,11 @@ runs:
       working-directory: ${{ inputs.working-directory || '.' }}
   - uses: ncipollo/release-action@v1
     with:
-      name: ${{ inputs.release-name == '---auto---' && inputs.version || inputs.release-name }}
+      name: ${{ inputs.release-name == '---auto---' && (inputs.version == '---auto---' && steps.bundle.outputs.version || inputs.version) || inputs.release-name }}
       body: |
         Install/depend on this package using [μpkg](https://github.com/orbit-online/upkg):
         ```
-        upkg add 'https://github.com/${{ github.repository }}/releases/download/${{ inputs.release-name == '---auto---' && inputs.version || inputs.release-name }}/${{ steps.bundle.outputs.basename }}' ${{ steps.bundle.outputs.sha256 }}
+        upkg add 'https://github.com/${{ github.repository }}/releases/download/${{ inputs.release-name == '---auto---' && (inputs.version == '---auto---' && steps.bundle.outputs.version || inputs.version) || inputs.release-name }}/${{ steps.bundle.outputs.basename }}' ${{ steps.bundle.outputs.sha256 }}
         ```
 
         ${{ inputs.release-message == '---auto---' && inputs.release-message || steps.release.outputs.message }}
