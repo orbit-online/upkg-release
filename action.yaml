@@ -82,7 +82,7 @@ runs:
         upkg add 'https://github.com/${{ github.repository }}/releases/download/${{ inputs.release-name == '---auto---' && (inputs.version == '---auto---' && steps.bundle.outputs.version || inputs.version) || inputs.release-name }}/${{ steps.bundle.outputs.basename }}' ${{ steps.bundle.outputs.sha256 }}
         ```
 
-        ${{ inputs.release-message == '---auto---' && inputs.release-message || steps.release.outputs.message }}
+        ${{ inputs.release-message == '---auto---' && steps.release.outputs.message || inputs.release-message }}
       draft: false
       prerelease: false
       artifacts: ${{ steps.bundle_dest.outputs.dest }}
